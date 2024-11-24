@@ -1,0 +1,80 @@
+name: Release
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [trunk]
+
+jobs:
+  build-artifacts:
+    if: github.head_ref == 'release' && github.event.pull_request.merged == true
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-musl
+            os: ubuntu-latest
+          - target: x86_64-apple-darwin
+            os: macos-latest
+          - target: aarch64-apple-darwin
+            os: macos-latest
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+    env:
+      package_name: flan-cli
+
+    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.target }}
+
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - uses: Swatinem/rust-cache@v2.7.5
+      - name: Install nightly toolchain
+        run: rustup default nightly
+      - name: Install host target
+        run: rustup target add ${{ matrix.target }}
+      
+      - name: Install musl-tools
+        if: ${{ matrix.target == 'x86_64-unknown-linux-musl' }}
+        run: sudo apt-get install -y musl-tools
+
+      - name: Build
+        run: cargo build -p flan-cli --release --target ${{ matrix.target }}
+
+      - name: Set Archive Name (Non-Windows)
+        id: archive
+        run: echo "archive_name=${{ env.package_name }}-${{ matrix.target }}" >> $GITHUB_ENV
+
+      - name: Set Archive Name (Windows)
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: echo "archive_name=${{ env.package_name }}-${{ matrix.target }}" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Create Archive Folder
+        run: mkdir ${{ env.archive_name }}
+
+      - name: Copy Unix Artifact
+        if: ${{ matrix.os != 'windows-latest' }}
+        run: cp target/${{ matrix.target }}/release/${{ env.package_name }} ${{ env.archive_name }}
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4.4.3
+        with:
+          name: ${{ matrix.target }}
+          path: ${{ env.archive_name }}.tgz
+          if-no-files-found: error
+
+  release:
+    needs: [build-artifacts]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - uses: actions/download-artifact@v4.1.8
+        with:
+          path: artifacts
+          merge-multiple: true
+      - uses: knope-dev/action@v2.1.0
+        with:
+          version: 0.18.0
+      - run: knope release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
