@@ -1,0 +1,59 @@
+# Port to listen on.
+#
+# Can also be specified via environment variable `PORT`.
+#
+# Default value: 8080
+#port = 8080
+
+# Bind address.
+#
+# Default value: "127.0.0.1"
+#address = "127.0.0.1"
+
+# Default value: "admin-key"
+#admin_key = "admin-key"
+
+# Database URL.
+#
+# Can also be specified via environment variable `DATABASE_URL`.
+#
+# Default value: "postgresql://flan:supersecretpassword@localhost:6500/db?schema=public"
+#database_url = "postgresql://flan:supersecretpassword@localhost:6500/db?schema=public"
+
+[minio]
+# Minio endpoint.
+#
+# Can also be specified via environment variable `MINIO_ENDPOINT`.
+#
+# Default value: "http://localhost:9000"
+#endpoint = "http://localhost:9000"
+
+# Minio access key.
+#
+# Can also be specified via environment variable `MINIO_ACCESS_KEY`.
+#
+# Default value: "minioadmin"
+#access_key = "minioadmin"
+
+# Minio secret key.
+#
+# Can also be specified via environment variable `MINIO_SECRET_KEY`.
+#
+# Default value: "minioadmin"
+#secret_key = "minioadmin"
+
+# Minio bucket name.
+#
+# Can also be specified via environment variable `MINIO_BUCKET_NAME`.
+#
+# Default value: "images"
+#bucket_name = "images"
+
+[redis]
+# Can also be specified via environment variable `REDIS_URL`.
+# Default value: "redis://localhost:6379"
+#url = "redis://localhost:6379"
+
+# Can also be specified via environment variable `REDIS_POOL_SIZE`.
+# Default value: 10
+#pool_size = 10

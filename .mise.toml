@@ -1,0 +1,33 @@
+[tools]
+act = "latest"
+typos = "latest"
+"ubi:knope-dev/knope" = "latest"
+
+[tasks]
+frontend = { dir = "frontend", run = "nrr dev --host" }
+backend = { env = { RUST_LOG = "debug", RUST_BACKTRACE = "1" }, run = "cargo run" }
+
+[tasks."build:backend:release"]
+run = "cargo xtask build --release"
+
+[tasks."build:frontend:release"]
+run = "nrr build"
+env = { NODE_ENV = "production" }
+dir = "frontend"
+
+[tasks.dev]
+raw = true
+depends = ["backend", "frontend"]
+
+[tasks."format:backend"]
+run = "cargo fmt"
+
+[tasks."format:frontend"]
+run = "nrr lint:fix"
+dir = "frontend"
+
+[tasks.format]
+depends = ["format:backend", "format:frontend"]
+
+[tasks.build]
+depends = ["build:backend:release", "build:frontend:release"]

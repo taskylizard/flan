@@ -1,0 +1,112 @@
+name: flan
+
+networks:
+  flan:
+    driver: bridge
+
+services:
+  traefik:
+    image: traefik:v2.10
+    container_name: flan_traefik
+    command:
+      - "--api.insecure=false" # Disable the API/Dashboard for security
+      - "--providers.docker=true" # Enable Docker provider
+      - "--providers.docker.exposedbydefault=false" # Containers must opt-in to be exposed
+      # - "--log.level=DEBUG"           # Uncomment for debug logging
+      # - "--accesslog=true"            # Uncomment to enable access logs
+      - "--entrypoints.web.address=:80" # Define web entrypoint on port 80
+    ports:
+      - "4112:80" # Map host port 4112 to container port 80
+      # - "6969:8080"                   # Uncomment to expose dashboard
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro # Mount Docker socket read-only
+    networks:
+      - flan
+
+  frontend:
+    networks:
+      - flan
+    container_name: flan_frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=PathPrefix(`/`) && !PathPrefix(`/api`) && !PathPrefix(`/images`)"
+      - "traefik.http.routers.frontend.entrypoints=web"
+      - "traefik.http.services.frontend.loadbalancer.server.port=4173"
+      - "traefik.http.routers.frontend.priority=1"
+    depends_on:
+      - backend
+
+  backend:
+    networks:
+      - flan
+    container_name: flan_backend
+    build: .
+    volumes:
+      - ./docker/config.toml:/config.toml:ro # Mount config file read-only
+    environment:
+      - RUST_LOG=debug # Set logging level
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=PathPrefix(`/api`) || PathPrefix(`/images`)"
+      - "traefik.http.routers.backend.entrypoints=web"
+      - "traefik.http.routers.backend.priority=10"
+      - "traefik.http.services.backend.loadbalancer.server.port=8080"
+    depends_on:
+      - postgres
+      - minio
+      - valkey
+
+  minio:
+    networks:
+      - flan
+    image: quay.io/minio/minio
+    container_name: flan_minio
+    command: server /data --console-address ":9001"
+    environment:
+      - MINIO_ROOT_USER=admin # Replace with your MinIO username
+      - MINIO_ROOT_PASSWORD=change-me-123 # Replace with a secure password
+    volumes:
+      - minio_data:/data # Persistent storage for MinIO
+    ports:
+      - 9000:9000 # API port
+      - 9001:9001 # Console port
+
+  postgres:
+    container_name: flan_postgres
+    networks:
+      - flan
+    image: postgres:15-alpine
+    ports:
+      - "6500:5432"
+    environment:
+      - POSTGRES_USER=app_user # Replace with your database username
+      - POSTGRES_PASSWORD=change-me-123 # Replace with a secure password
+      - POSTGRES_DB=db
+    restart: always
+    volumes:
+      - "postgres_data:/var/lib/postgresql/data" # Persistent storage for PostgreSQL
+    logging:
+      options:
+        max-size: "20m" # Limit log file size
+        max-file: "3" # Keep 3 rotated log files
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 60s
+      retries: 5
+      start_period: 80s
+
+  valkey:
+    image: valkey/valkey:8.0.1
+    networks:
+      - flan
+    container_name: flan_valkey
+    ports:
+      - 6189:6379
+
+volumes:
+  minio_data:
+  postgres_data:

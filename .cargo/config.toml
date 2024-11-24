@@ -1,0 +1,5 @@
+[alias]
+prisma = "run -p prisma-cli --"
+p = "run -p prisma-cli --"
+cli = "run -p flan-cli --"
+xtask = "run -p xtask --"

@@ -1,0 +1,13 @@
+[package]
+name = "xtask"
+version = "0.0.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "4.4", features = ["derive"] }
+xshell = "0.2"
+eyre = "0.6.12"
+clap_complete = "4.5.38"
+flan-cli = { path = "../cli" }
+common = { path = "../common" }
+confique = { version = "0.3.0", features = ["toml"] }

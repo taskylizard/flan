@@ -1,0 +1,60 @@
+{
+	"extends": [
+		"config:recommended",
+		":rebaseStalePrs",
+		"docker:pinDigests",
+		"helpers:pinGitHubActionDigests",
+		":configMigration",
+		"github>nuxt/renovate-config-nuxt"
+	],
+	"semanticCommits": "enabled",
+	"automerge": true,
+	"automergeType": "branch",
+	"platformAutomerge": true,
+	"lockFileMaintenance": {
+		"automerge": true
+	},
+	"major": {
+		"automerge": false
+	},
+	"addLabels": ["renovate"],
+	"packageRules": [
+		{
+			"matchManagers": ["cargo"],
+			"matchDepTypes": ["dependencies", "dev-dependencies"],
+			"groupName": "rust dependencies",
+			"separateMajorMinor": true
+		},
+		{
+			"matchManagers": ["cargo"],
+			"matchDepTypes": ["build-dependencies"],
+			"groupName": "rust build dependencies"
+		},
+		{
+			"groupName": "definitelyTyped",
+			"automerge": true,
+			"matchPackageNames": ["@types/{/,}**"]
+		},
+		{
+			"matchUpdateTypes": ["minor", "patch"],
+			"groupName": "all non-major dependencies",
+			"groupSlug": "all-minor-patch",
+			"matchPackageNames": ["*"]
+		},
+		{
+			"automerge": true,
+			"extends": ["packages:linters"]
+		},
+		{
+			"matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+			"automerge": true
+		}
+	],
+	"cargo": {
+		"enabled": true,
+		"commitMessageTopic": "{{depName}}",
+		"fileMatch": ["(^|/)Cargo\\.toml$"],
+		"versioning": "cargo"
+	},
+	"prBodyNotes": ["{{#if isMajor}}:warning: MAJOR MAJOR MAJOR :warning:{{/if}}"]
+}
