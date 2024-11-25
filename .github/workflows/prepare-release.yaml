@@ -9,7 +9,7 @@ jobs:
     if: "!contains(github.event.head_commit.message, 'chore: prepare release')" # Skip merges from releases
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.2.2
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -17,7 +17,7 @@ jobs:
         run: |
           git config --global user.name GitHub Actions
           git config user.email github-actions@github.com
-      - uses: knope-dev/action@v2.1.0
+      - uses: knope-dev/action@407e9ef7c272d2dd53a4e71e39a7839e29933c48 # v2.1.0
         with:
           version: 0.18.0
       - run: knope prepare-release --verbose
