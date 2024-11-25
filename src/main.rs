@@ -1,9 +1,9 @@
-use axum::{
-    routing::{delete, get, post},
-    Router,
-};
+use crate::handlers::create_router;
+use crate::layers::logger::LoggingMiddleware;
+use crate::state::AppState;
 use color_eyre::eyre;
 use color_eyre::eyre::WrapErr;
+use common::{config::AppConfig, Config};
 use dotenvy::dotenv;
 use eyre::{Report, Result};
 use fred::{
@@ -17,6 +17,8 @@ use s3::{
 };
 use std::{process::ExitCode, sync::Arc, time::Duration};
 use time::macros::format_description;
+use tower_http::{compression::CompressionLayer, timeout::TimeoutLayer};
+use tower_layer::layer_fn;
 use tracing::info;
 use tracing_error::ErrorLayer;
 use tracing_subscriber::prelude::*;
@@ -25,17 +27,10 @@ use tracing_subscriber::{
     EnvFilter,
 };
 
-use crate::handlers::{
-    delete_image::delete_image_handler, get_image::get_image_handler, health_check::health_handler,
-    list_images::list_images_handler, register_user::register_user_handler,
-    upload_image::upload_image_handler,
-};
-use common::{config::AppConfig, Config};
-use state::AppState;
-
 #[allow(warnings, unused)]
 mod db;
 mod handlers;
+mod layers;
 mod state;
 
 #[tokio::main]
@@ -139,13 +134,10 @@ async fn main() -> Result<ExitCode, Report> {
         redis: redis_pool,
     };
 
-    let app = Router::new()
-        .route("/api/health", get(health_handler))
-        .route("/api/register", post(register_user_handler))
-        .route("/images/:file_id", get(get_image_handler))
-        .route("/api/delete/:file_id", delete(delete_image_handler))
-        .route("/api/upload", post(upload_image_handler))
-        .route("/api/list", get(list_images_handler))
+    let app = create_router()
+        .layer(TimeoutLayer::new(Duration::from_secs(10)))
+        .layer(CompressionLayer::new())
+        .layer(layer_fn(LoggingMiddleware))
         .with_state(state);
 
     // Run our server based on configuration values provided

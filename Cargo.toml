@@ -3,6 +3,7 @@ name = "flan"
 version = "0.1.0"
 edition = "2021"
 include = ["src/**/*"]
+exclude = ["**/node_modules", "frontend"]
 
 [workspace]
 members = ["cli", "prisma-cli", "common", "xtask"]
@@ -33,7 +34,7 @@ tracing-error = "0.2.0"
 common = { path = "./common" }
 chrono.workspace = true
 time = { version = "0.3.36", features = ["formatting", "macros"] }
-tower-http = { version = "0.6.1", features = ["fs", "trace"] }
+tower-http = { version = "0.6.1", features = ["compression-gzip", "fs", "timeout", "trace"] }
 image = { version = "0.24.6", features = ["jpeg", "png", "webp"] }
 fred = { version = "9.4.0" }
 webp = "0.2.2"
@@ -42,6 +43,9 @@ serde.workspace = true
 prisma-client-rust = { git = "https://github.com/Brendonovich/prisma-client-rust", tag = "0.6.11", default-features = false, features = [
   "postgresql",
 ] }
+futures-util = "0.3.31"
+tower-service = "0.3.3"
+tower-layer = "0.3.3"
 
 [workspace.dependencies]
 tokio = { version = "1.41", features = ["full"] }
