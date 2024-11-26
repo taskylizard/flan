@@ -2,6 +2,7 @@
 act = "latest"
 typos = "latest"
 "ubi:knope-dev/knope" = "latest"
+"ubi:crate-ci/cargo-release" = "latest"
 
 [tasks]
 frontend = { dir = "frontend", run = "nrr dev --host" }
