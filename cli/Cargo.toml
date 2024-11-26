@@ -3,6 +3,8 @@ name = "flan-cli"
 readme = "./README.md"
 version = "0.0.0"
 edition = "2021"
+repository = "https://github.com/taskylizard/flan"
+publish = true
 
 [dependencies]
 tokio = { version = "1.0", features = ["full"] }

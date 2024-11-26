@@ -24,7 +24,7 @@ pub enum Commands {
         #[arg(short, long)]
         username: String,
         /// Admin key for registration
-        #[arg(short, long)]
+        #[arg(long, env = "FLAN_ADMIN_KEY")]
         admin_key: String,
     },
     /// Upload an image
@@ -32,13 +32,23 @@ pub enum Commands {
         /// Path to the image file
         file: PathBuf,
 
-        /// Username for authentication (can also use FLAN_USERNAME env var)
+        /// Username for authentication
         #[arg(short, long, env = "FLAN_USERNAME")]
         username: String,
 
-        /// Access key for authentication (can also use FLAN_ACCESS_KEY env var)
-        #[arg(short, long, env = "FLAN_ACCESS_KEY")]
-        key: String,
+        /// Access key for authentication
+        #[arg(long, env = "FLAN_ACCESS_KEY")]
+        access_key: String,
+    },
+    /// List uploaded images
+    List {
+        /// Username for authentication
+        #[arg(long, env = "FLAN_USERNAME")]
+        username: String,
+
+        /// Access key for authentication
+        #[arg(long, env = "FLAN_ACCESS_KEY")]
+        access_key: String,
     },
     /// Get an image
     Get {
@@ -49,14 +59,17 @@ pub enum Commands {
         #[arg(short, long)]
         output: Option<PathBuf>,
     },
-    /// List images
-    List {
-        /// Username for authentication (can also use FLAN_USERNAME env var)
-        #[arg(short, long, env = "FLAN_USERNAME")]
+    /// Delete an image
+    Delete {
+        /// File ID of the image to delete
+        file_id: String,
+
+        /// Username for authentication
+        #[arg(long, env = "FLAN_USERNAME")]
         username: String,
 
-        /// Access key for authentication (can also use FLAN_ACCESS_KEY env var)
-        #[arg(short, long, env = "FLAN_ACCESS_KEY")]
-        key: String,
+        /// Access key for authentication
+        #[arg(long, env = "FLAN_ACCESS_KEY")]
+        access_key: String,
     },
 }

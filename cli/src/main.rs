@@ -9,35 +9,23 @@ use common::{
     register::{RegisterUserRequest, RegisterUserResponse},
     upload::UploadImageResponse,
 };
-use std::path::PathBuf;
-use tokio::io::AsyncReadExt;
-
-use console::{style, Term};
+use console::style;
+use core::{Cli, Commands};
 use reqwest::{
+    header::{HeaderMap, HeaderValue},
     multipart::{Form, Part},
     Client, StatusCode,
 };
-use tokio::fs::File;
+use std::path::PathBuf;
 mod core;
-use core::{Cli, Commands};
 
-async fn register(
+async fn register_user(
     client: &Client,
-    server: &str,
+    server_url: &str,
     username: String,
     admin_key: String,
 ) -> Result<()> {
-    let term = Term::stdout();
-    term.write_line("")?;
-
-    // Show progress spinner
-    term.write_line(&format!(
-        "{} Registering user {}...",
-        style("[1/2]").bold().dim(),
-        style(&username).cyan()
-    ))?;
-
-    let url = format!("{}/api/register", server);
+    let url = format!("{}/api/register", server_url);
     let request = RegisterUserRequest {
         username,
         admin_key,
@@ -47,52 +35,10 @@ async fn register(
 
     match response.status() {
         StatusCode::OK => {
-            let result = response.json::<RegisterUserResponse>().await?;
-            term.clear_last_lines(1)?;
-            term.write_line(&format!(
-                "{} Registration successful!",
-                style("✔").green().bold()
-            ))?;
-            term.write_line("")?;
-
-            // Pretty print the credentials
-            println!("{}", style("Your Credentials").bold());
-            println!("{}", style("───────────────").dim());
-            println!(
-                "{} {}",
-                style("Username:").bold(),
-                style(&result.username).cyan()
-            );
-            println!(
-                "{} {}",
-                style("Access Key:").bold(),
-                style(&result.key).green()
-            );
-
-            // Print warning about saving the key
-            println!("{}", style("⚠ Important:").yellow().bold());
-            println!(
-                "{}",
-                style("Save your access key securely. It cannot be recovered if lost.").yellow()
-            );
-
-            // Print usage instructions
-            println!("{}", style("Quick Start:").bold());
-            println!("{}", style("───────────────").dim());
-            println!("Export your credentials:");
-            println!(
-                "{} export FLAN_USERNAME='{}'",
-                style("$").dim(),
-                result.username
-            );
-            println!(
-                "{} export FLAN_ACCESS_KEY='{}'",
-                style("$").dim(),
-                result.key
-            );
-            println!("Upload an image:");
-            println!("{} flan-cli upload --file image.jpg", style("$").dim());
-
+            let register_response: RegisterUserResponse = response.json().await?;
+            println!("User registered successfully:");
+            println!("Username: {}", register_response.username);
+            println!("Access Key: {}", register_response.key);
             Ok(())
         }
         StatusCode::UNAUTHORIZED => Err(eyre!("{} Invalid admin key", style("✘").red().bold())),
@@ -106,74 +52,47 @@ async fn register(
     }
 }
 
-async fn upload(
+async fn upload_image(
     client: &Client,
-    server: &str,
+    server_url: &str,
     file_path: PathBuf,
     username: String,
     access_key: String,
 ) -> Result<()> {
-    let term = Term::stdout();
-    let file_name = file_path
+    let file_name = &file_path
         .file_name()
         .ok_or_else(|| eyre!("Invalid file name"))?
         .to_string_lossy();
 
-    term.write_line("")?;
-    term.write_line(&format!(
-        "{} Reading file {}...",
-        style("[1/2]").bold().dim(),
-        style(&file_name).cyan()
-    ))?;
-
     // Read file
-    let mut file = File::open(&file_path).await?;
-    let mut buffer = Vec::new();
-    file.read_to_end(&mut buffer).await?;
+    let file = tokio::fs::read(file_name.to_string()).await?;
 
-    // Get the mime type
-    let mime_type = mime_guess::from_path(&file_path)
-        .first_or_octet_stream()
-        .to_string();
+    // Create multipart form
+    let form = Form::new().part(
+        "file",
+        Part::bytes(file)
+            .file_name(file_name.to_string())
+            .mime_str("application/octet-stream")?,
+    );
 
-    term.clear_last_lines(1)?;
-    term.write_line(&format!(
-        "{} Uploading {}...",
-        style("[2/2]").bold().dim(),
-        style(&file_name).cyan()
-    ))?;
-
-    let url = format!("{}/api/upload", server);
-    let part = Part::bytes(buffer)
-        .file_name(file_name.to_string())
-        .mime_str(&mime_type)?;
-
-    let form = Form::new().part("file", part);
+    // Prepare headers
+    let mut headers = HeaderMap::new();
+    headers.insert("X-Username", HeaderValue::from_str(&username)?);
+    headers.insert("X-Access-Key", HeaderValue::from_str(&access_key)?);
 
     let response = client
-        .post(&url)
-        .header("X-Username", username)
-        .header("X-Access-Key", access_key)
+        .post(format!("{}/api/upload", server_url))
+        .headers(headers)
         .multipart(form)
         .send()
         .await?;
 
     match response.status() {
         StatusCode::OK => {
-            let result = response.json::<UploadImageResponse>().await?;
-            term.clear_last_lines(1)?;
-            term.write_line(&format!("{} Upload successful!", style("✔").green().bold()))?;
-            term.write_line("")?;
-
-            println!(
-                "{} {}",
-                style("File ID:").bold(),
-                style(&result.file_id).cyan()
-            );
-            println!("{} {}", style("URL:").bold(), style(&result.url).green());
-            println!("Download your image:");
-            println!("{} flan-cli get {}", style("$").dim(), result.file_id);
-
+            let upload_response: UploadImageResponse = response.json().await?;
+            println!("Image uploaded successfully:");
+            println!("File ID: {}", upload_response.file_id);
+            println!("URL: {}", upload_response.url);
             Ok(())
         }
         StatusCode::UNAUTHORIZED => Err(eyre!("{} Invalid credentials", style("✘").red().bold())),
@@ -189,20 +108,70 @@ async fn upload(
     }
 }
 
-async fn get(
+async fn list_images(
+    client: &Client,
+    server_url: &str,
+    username: &str,
+    access_key: &str,
+) -> Result<()> {
+    // Prepare headers
+    let mut headers = HeaderMap::new();
+    headers.insert("X-Username", HeaderValue::from_str(username)?);
+    headers.insert("X-Access-Key", HeaderValue::from_str(access_key)?);
+
+    let response = client
+        .get(format!("{}/api/list", server_url))
+        .headers(headers)
+        .send()
+        .await?;
+
+    match response.status() {
+        reqwest::StatusCode::OK => {
+            let result: ListImagesResponse = response.json().await?;
+
+            if result.images.is_empty() {
+                println!("No images found.");
+            } else {
+                let mut table = Table::new();
+                table
+                    .set_content_arrangement(ContentArrangement::Dynamic)
+                    .load_preset(UTF8_FULL)
+                    .apply_modifier(UTF8_ROUND_CORNERS)
+                    .set_header(vec![
+                        Cell::new("File ID")
+                            .add_attribute(Attribute::Bold)
+                            .fg(Color::Green),
+                        Cell::new("Created At")
+                            .add_attribute(Attribute::Bold)
+                            .fg(Color::Cyan),
+                    ]);
+                for image in &result.images {
+                    table.add_row(vec![
+                        Cell::new(&image.file_id),
+                        Cell::new(image.created_at.to_string()),
+                    ]);
+                }
+
+                println!("{table}");
+            }
+            Ok(())
+        }
+        StatusCode::UNAUTHORIZED => Err(eyre!("{} Invalid credentials", style("✘").red().bold())),
+        _ => Err(eyre!(
+            "{} Server error: {} - {}",
+            style("✘").red().bold(),
+            response.status(),
+            response.text().await?
+        )),
+    }
+}
+
+async fn get_image(
     client: &Client,
     server: &str,
     file_id: String,
     output: Option<PathBuf>,
 ) -> Result<()> {
-    let term = Term::stdout();
-    term.write_line("")?;
-    term.write_line(&format!(
-        "{} Downloading image {}...",
-        style("[1/2]").bold().dim(),
-        style(&file_id).cyan()
-    ))?;
-
     let url = format!("{}/images/{}", server, file_id);
     let response = client.get(&url).send().await?;
 
@@ -220,18 +189,13 @@ async fn get(
                 None => PathBuf::from(format!("{}.{}", file_id, extension)),
             };
 
-            term.clear_last_lines(1)?;
-            term.write_line(&format!("{} Saving image...", style("[2/2]").bold().dim()))?;
-
             let bytes = response.bytes().await?;
             tokio::fs::write(&output_path, bytes).await?;
 
-            term.clear_last_lines(1)?;
-            term.write_line(&format!(
+            println!(
                 "{} Image downloaded successfully!",
                 style("✔").green().bold()
-            ))?;
-            term.write_line("")?;
+            );
 
             println!("{}", style("Download Details").bold());
             println!("{}", style("────────────────").dim());
@@ -252,55 +216,29 @@ async fn get(
     }
 }
 
-async fn list(client: &Client, server: &str, username: String, access_key: String) -> Result<()> {
-    let term = Term::stdout();
-    term.write_line("")?;
-    term.write_line(&format!(
-        "{} Listing images...",
-        style("[1/2]").bold().dim()
-    ))?;
+async fn delete_image(
+    client: &Client,
+    server_url: &str,
+    file_id: &str,
+    username: &str,
+    access_key: &str,
+) -> Result<()> {
+    // Prepare headers
+    let mut headers = HeaderMap::new();
+    headers.insert("X-Username", HeaderValue::from_str(username)?);
+    headers.insert("X-Access-Key", HeaderValue::from_str(access_key)?);
 
-    let url = format!("{}/api/images", server);
     let response = client
-        .get(&url)
-        .header("X-Username", username)
-        .header("X-Access-Key", access_key)
+        .delete(format!("{}/api/delete/{}", server_url, file_id))
+        .headers(headers)
         .send()
         .await?;
 
     match response.status() {
-        StatusCode::OK => {
-            let result = response.json::<ListImagesResponse>().await?;
-            term.clear_last_lines(1)?;
-            let mut table = Table::new();
-            table
-                .set_content_arrangement(ContentArrangement::Dynamic)
-                .load_preset(UTF8_FULL)
-                .apply_modifier(UTF8_ROUND_CORNERS)
-                .set_header(vec![
-                    Cell::new("File ID")
-                        .add_attribute(Attribute::Bold)
-                        .fg(Color::Green),
-                    Cell::new("Created At")
-                        .add_attribute(Attribute::Bold)
-                        .fg(Color::Cyan),
-                ]);
-            for image in &result.images {
-                table.add_row(vec![
-                    Cell::new(&image.file_id),
-                    Cell::new(image.created_at.to_string()),
-                ]);
-            }
-
-            println!("{table}");
-
-            // Instructions on how to get a image from file-id
-            println!("Get a image using the image id:");
-            println!("{} flan-cli get <image-id>", style("$").bold().dim());
+        reqwest::StatusCode::NO_CONTENT => {
+            println!("Image deleted successfully: {}", file_id);
             Ok(())
         }
-
-        StatusCode::UNAUTHORIZED => Err(eyre!("{} Invalid credentials", style("✘").red().bold())),
         _ => Err(eyre!(
             "{} Server error: {} - {}",
             style("✘").red().bold(),
@@ -321,20 +259,30 @@ async fn main() -> Result<()> {
             username,
             admin_key,
         } => {
-            register(&client, &cli.server, username, admin_key).await?;
+            register_user(&client, &cli.server, username, admin_key).await?;
         }
         Commands::Upload {
             file,
             username,
-            key,
+            access_key,
         } => {
-            upload(&client, &cli.server, file, username, key).await?;
+            upload_image(&client, &cli.server, file, username, access_key).await?;
         }
         Commands::Get { file_id, output } => {
-            get(&client, &cli.server, file_id, output).await?;
+            get_image(&client, &cli.server, file_id, output).await?;
         }
-        Commands::List { username, key } => {
-            list(&client, &cli.server, username, key).await?;
+        Commands::List {
+            username,
+            access_key,
+        } => {
+            list_images(&client, &cli.server, &username, &access_key).await?;
+        }
+        Commands::Delete {
+            file_id,
+            username,
+            access_key,
+        } => {
+            delete_image(&client, &cli.server, &file_id, &username, &access_key).await?;
         }
     }
 
