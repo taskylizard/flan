@@ -1,4 +1,4 @@
-FROM oven/bun:1 AS base
+FROM oven/bun:1@sha256:4ca745e33ed5b5b5233d3e1ed8d5e63dafd519d2adcfc37f65218ece032824f3 AS base
 WORKDIR /usr/src/app
 
 # install dependencies into temp directory

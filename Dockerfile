@@ -1,4 +1,4 @@
-FROM rustlang/rust:nightly-slim AS builder
+FROM rustlang/rust:nightly-slim@sha256:cee471e2565c66954fb9be34c7b6ef9cd4a66e5c06ec931296c76cfc9543811a AS builder
 WORKDIR /app
 
 RUN apt-get update && \
@@ -34,7 +34,7 @@ RUN --mount=type=cache,target=/root/.rustup \
   cargo build --release;\
   cp target/release/flan .
 
-FROM debian:12-slim as runtime
+FROM debian:12-slim@sha256:ca3372ce30b03a591ec573ea975ad8b0ecaf0eb17a354416741f8001bbcae33d as runtime
 WORKDIR /app
 
 RUN apt-get update && \
