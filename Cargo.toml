@@ -11,7 +11,7 @@ members = ["cli", "prisma-cli", "common", "xtask"]
 resolver = "2"
 
 [dependencies]
-axum = { version = "0.7", features = [
+axum = { version = "0.7.9", features = [
   "json",
   "macros",
   "multipart",
@@ -19,10 +19,10 @@ axum = { version = "0.7", features = [
   "tower-log",
   "tracing",
 ] }
-tracing = "0.1"
-tracing-subscriber = { version = "0.3", features = ["env-filter", "time"] }
-uuid = { version = "1.0", features = ["v4"] }
-bytes = "1.0"
+tracing = "0.1.41"
+tracing-subscriber = { version = "0.3.19", features = ["env-filter", "time"] }
+uuid = { version = "1.11.0", features = ["v4"] }
+bytes = "1.9.0"
 dotenvy = "0.15.7"
 s3-tokio = "0.39.4"
 rand = "0.8.5"
@@ -31,19 +31,19 @@ color-eyre = { version = "0.6.3", features = [
   "capture-spantrace",
   "issue-url",
 ] }
-tracing-error = "0.2.0"
+tracing-error = "0.2.1"
 common = { path = "./common" }
 chrono.workspace = true
 time = { version = "0.3.36", features = ["formatting", "macros"] }
-tower-http = { version = "0.6.1", features = [
+tower-http = { version = "0.6.2", features = [
   "compression-gzip",
   "fs",
   "timeout",
   "trace",
 ] }
-image = { version = "0.24.6", features = ["jpeg", "png", "webp"] }
+image = { version = "0.25.5", features = ["jpeg", "png", "webp"] }
 fred = { version = "9.4.0" }
-webp = "0.2.2"
+webp = "0.3.0"
 tokio.workspace = true
 serde.workspace = true
 prisma-client-rust = { git = "https://github.com/Brendonovich/prisma-client-rust", tag = "0.6.11", default-features = false, features = [
@@ -54,7 +54,7 @@ tower-service = "0.3.3"
 tower-layer = "0.3.3"
 
 [workspace.dependencies]
-tokio = { version = "1.41", features = ["full"] }
+tokio = { version = "1.41.1", features = ["full"] }
 serde = { version = "1.0.215", features = ["derive"] }
 chrono = "0.4.38"
 
