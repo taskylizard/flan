@@ -34,7 +34,7 @@ color-eyre = { version = "0.6.3", features = [
 tracing-error = "0.2.1"
 common = { path = "./common" }
 chrono.workspace = true
-time = { version = "0.3.36", features = ["formatting", "macros"] }
+time = { version = "0.3.37", features = ["formatting", "macros"] }
 tower-http = { version = "0.6.2", features = [
   "compression-gzip",
   "fs",
@@ -54,7 +54,7 @@ tower-service = "0.3.3"
 tower-layer = "0.3.3"
 
 [workspace.dependencies]
-tokio = { version = "1.41.1", features = ["full"] }
+tokio = { version = "1.42.0", features = ["full"] }
 serde = { version = "1.0.215", features = ["derive"] }
 chrono = "0.4.38"
 
