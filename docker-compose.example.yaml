@@ -62,7 +62,7 @@ services:
   minio:
     networks:
       - flan
-    image: quay.io/minio/minio
+    image: quay.io/minio/minio@sha256:ac591851803a79aee64bc37f66d77c56b0a4b6e12d9e5356380f4105510f2332
     container_name: flan_minio
     command: server /data --console-address ":9001"
     environment:
@@ -78,7 +78,7 @@ services:
     container_name: flan_postgres
     networks:
       - flan
-    image: postgres:15-alpine
+    image: postgres:15-alpine@sha256:5d4b2f57adc7739452b0be6cee25f263bfc64b609446bcdd8170354cf8ba8e80
     ports:
       - "6500:5432"
     environment:
@@ -100,7 +100,7 @@ services:
       start_period: 80s
 
   valkey:
-    image: valkey/valkey:8.0.1
+    image: valkey/valkey:8.0.1@sha256:c5d4f082b76d433a38274ebb38a43cff19829a062928bdcc45611135ef54e608
     networks:
       - flan
     container_name: flan_valkey
