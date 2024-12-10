@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@radix-icons/vue": "^1.0.0",
-    "@unhead/vue": "^1.11.13",
+    "@unhead/vue": "^1.11.14",
     "@vueuse/core": "^11.3.0",
     "@vueuse/head": "^2.0.0",
     "class-variance-authority": "^0.7.1",

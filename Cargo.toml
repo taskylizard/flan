@@ -56,7 +56,7 @@ tower-layer = "0.3.3"
 [workspace.dependencies]
 tokio = { version = "1.42.0", features = ["full"] }
 serde = { version = "1.0.215", features = ["derive"] }
-chrono = "0.4.38"
+chrono = "0.4.39"
 
 [[bin]]
 name = "flan"
