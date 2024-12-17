@@ -41,7 +41,7 @@ async fn validate_user(
         .map_err(|e| DeleteImageError::DatabaseError(e.to_string()))?;
 
     match user {
-        Some(user) if user.key == key => Ok(user.id),
+        Some(user) if user.access_key == key => Ok(user.id),
         _ => Err(DeleteImageError::InvalidCredentials),
     }
 }
@@ -66,6 +66,23 @@ async fn verify_image_ownership(
     }
 }
 
+/// Delete an image
+#[utoipa::path(
+    delete,
+    path = "/delete/:file_id",
+    tag = "Image",
+    responses(
+        (status = 204, description = "Image deleted successfully"),
+        (status = 400, description = "Invalid credentials"),
+        (status = 401, description = "Unauthorized"),
+        (status = 404, description = "Image not found"),
+        (status = 500, description = "Internal server error" )
+    ),
+    security((),
+        ("access_key" = []),
+        ("admin_key" = [])
+    )
+)]
 pub async fn delete_image_handler(
     State(state): State<AppState>,
     headers: HeaderMap,

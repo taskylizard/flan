@@ -1,3 +1,4 @@
+use super::{ImageInfo, ListImagesResponse};
 use crate::db::{image, user};
 use crate::state::AppState;
 use axum::{
@@ -5,7 +6,6 @@ use axum::{
     http::{HeaderMap, StatusCode},
     response::Json,
 };
-use common::list::{ImageInfo, ListImagesResponse};
 use tracing::error;
 
 #[derive(Debug)]
@@ -37,11 +37,25 @@ async fn validate_user(
         .map_err(|e| ListImagesError::DatabaseError(e.to_string()))?;
 
     match user {
-        Some(user) if user.key == key => Ok(user.id),
+        Some(user) if user.access_key == key => Ok(user.id),
         _ => Err(ListImagesError::InvalidCredentials),
     }
 }
 
+/// Get all images for a user
+#[utoipa::path(
+    get,
+    path = "/list",
+    responses(
+        (status = 200, description = "List of images", body = ListImagesResponse),
+        (status = 401, description = "Invalid credentials"),
+        (status = 500, description = "Internal server error")
+    ),
+    security(
+        ("access_key" = [])
+    ),
+    tag = "Image"
+)]
 pub async fn list_images_handler(
     State(state): State<AppState>,
     headers: HeaderMap,
@@ -79,6 +93,7 @@ pub async fn list_images_handler(
     let images = images
         .into_iter()
         .map(|img| ImageInfo {
+            favorite: img.favorite,
             file_id: img.file_id.to_string(),
             url: format!("/images/{}", img.file_id),
             created_at: img.created_at.into(),

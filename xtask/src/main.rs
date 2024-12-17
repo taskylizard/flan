@@ -1,12 +1,7 @@
-use clap::CommandFactory;
 use clap::Parser;
-use clap::ValueEnum;
-use clap_complete::generate_to;
-use clap_complete::Shell as CShell;
 use common::config::AppConfig;
 use confique::toml::{self, FormatOptions};
 use eyre::Result;
-use flan_cli::core::Cli as FlanCli;
 use xshell::{cmd, Shell};
 
 #[derive(Parser)]
@@ -57,9 +52,9 @@ fn main() -> Result<()> {
 fn generate_completions(out: Option<&str>) -> Result<()> {
     let target_dir = out.unwrap_or("target/completions");
     std::fs::create_dir_all(target_dir)?;
-    for &shell in CShell::value_variants() {
-        generate_to(shell, &mut FlanCli::command(), "flan-cli", target_dir)?;
-    }
+    // for &shell in CShell::value_variants() {
+    //     generate_to(shell, &mut FlanCli::command(), "flan-cli", target_dir)?;
+    // }
 
     Ok(())
 }

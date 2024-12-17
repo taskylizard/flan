@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "generate": "openapi-typescript http://localhost:8111/api-docs/openapi.json --output ./frontend/src/lib/_api.ts",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "dev": "vite",
@@ -28,6 +29,7 @@
     "vue-sonner": "^1.3.0"
   },
   "devDependencies": {
+    "openapi-typescript": "^7.4.4",
     "@antfu/eslint-config": "^3.11.2",
     "@coloradix/tailwindcss": "^2.3.2",
     "@fontsource/geist-sans": "^5.1.0",

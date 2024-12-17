@@ -36,3 +36,5 @@ config.toml
 stuff
 vite.config.ts.timestamp-*.mjs
 src/db.rs
+.bacon-locations
+buck-out/v2

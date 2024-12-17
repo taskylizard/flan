@@ -27,15 +27,18 @@ pub struct AppConfig {
     )]
     pub database_url: String,
 
+    /// Redis config.
     #[config(nested)]
     pub redis: RedisConfig,
 }
 
 #[derive(Debug, Config)]
 pub struct RedisConfig {
+    /// Redis URL.
     #[config(env = "REDIS_URL", default = "redis://localhost:6379")]
     pub url: String,
 
+    /// Redis pool size.
     #[config(env = "REDIS_POOL_SIZE", default = 10)]
     pub pool_size: usize,
 }

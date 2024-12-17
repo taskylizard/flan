@@ -7,7 +7,7 @@ exclude = ["**/node_modules", "frontend"]
 publish = false
 
 [workspace]
-members = ["cli", "prisma-cli", "common", "xtask"]
+members = ["prisma-cli", "common", "xtask"]
 resolver = "2"
 
 [dependencies]
@@ -46,17 +46,26 @@ fred = { version = "9.4.0" }
 webp = "0.3.0"
 tokio.workspace = true
 serde.workspace = true
+serde_json.workspace = true
 prisma-client-rust = { git = "https://github.com/Brendonovich/prisma-client-rust", tag = "0.6.11", default-features = false, features = [
   "postgresql",
 ] }
 futures-util = "0.3.31"
 tower-service = "0.3.3"
 tower-layer = "0.3.3"
+utoipa = { version = "5.2.0", features = [
+  "axum_extras",
+  "chrono",
+  "uuid",
+  "macros",
+] }
+utoipa-scalar = { version = "0.2.0", features = ["axum"] }
 
 [workspace.dependencies]
 tokio = { version = "1.42.0", features = ["full"] }
 serde = { version = "1.0.215", features = ["derive"] }
 chrono = "0.4.38"
+serde_json = "1.0.133"
 
 [[bin]]
 name = "flan"
@@ -74,3 +83,13 @@ opt-level = 3
 [profile.dist]
 inherits = "release"
 lto = "thin"
+
+[profile.opt]
+inherits = "release"
+opt-level = 3
+debug = false
+rpath = false
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = "symbols"

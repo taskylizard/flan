@@ -26,7 +26,6 @@ export default {
   ],
   prefix: '',
   theme: {
-    colors: radix.colors,
     container: {
       center: true,
       padding: '2rem',
@@ -36,6 +35,7 @@ export default {
     },
     extend: {
       colors: {
+        ...radix.colors,
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',

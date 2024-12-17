@@ -1,0 +1,11 @@
+[tools.act]
+version = "0.2.69"
+
+[tools.typos]
+version = "1.28.3"
+
+[tools."ubi:crate-ci/cargo-release"]
+version = "0.25.13"
+
+[tools."ubi:knope-dev/knope"]
+version = "0.16.1"

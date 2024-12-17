@@ -1,10 +1,10 @@
+use super::{RegisterUserRequest, RegisterUserResponse};
 use crate::db::{user, PrismaClient};
 use crate::state::AppState;
 use axum::{
     extract::{Json, State},
     http::StatusCode,
 };
-use common::register::{RegisterUserRequest, RegisterUserResponse};
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
 use tracing::error;
 
@@ -68,6 +68,24 @@ async fn create_user(
         .map_err(|e| RegistrationError::DatabaseError(e.to_string()))
 }
 
+/// Register a new user
+#[utoipa::path(
+    post,
+    path = "/register",
+    tag = "User",
+description = "Registers a new user, returns the username and access key",
+    request_body = RegisterUserRequest,
+    responses(
+        (status = 200, description = "User registered successfully", body = RegisterUserResponse),
+        (status = 400, description = "Username is already taken"),
+        (status = 401, description = "Unauthorized" ),
+        (status = 500, description = "Internal server error" )
+    ),
+    security((),
+        ("access_key" = []),
+        ("admin_key" = [])
+    )
+)]
 pub async fn register_user_handler(
     State(state): State<AppState>,
     Json(payload): Json<RegisterUserRequest>,

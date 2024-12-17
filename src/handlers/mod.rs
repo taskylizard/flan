@@ -1,30 +1,73 @@
-use axum::{
-    routing::{delete, get, post},
-    Router,
-};
-
-pub mod delete_image;
-pub mod get_image;
-pub mod health_check;
-pub mod list_images;
-pub mod register_user;
-pub mod upload_image;
+use crate::handlers::favorite::FavoriteApi;
+use crate::handlers::folder::FolderApi;
+use crate::handlers::image::ImageApi;
+use crate::handlers::tag::TagApi;
+use crate::handlers::user::UserApi;
 use crate::state::AppState;
+use axum::{routing::get, Json, Router};
+use utoipa::{
+    openapi::security::{ApiKey, ApiKeyValue, SecurityScheme},
+    Modify, OpenApi,
+};
+use utoipa_scalar::{Scalar, Servable as ScalarServable};
+
+pub mod favorite;
+pub mod folder;
+pub mod health_check;
+pub mod image;
+pub mod tag;
+pub mod user;
 
 pub fn create_router() -> Router<AppState> {
-    let api_router = Router::new()
-        .route("/health", get(health_check::health_handler))
-        .route("/register", post(register_user::register_user_handler))
-        .route(
-            "/delete/:file_id",
-            delete(delete_image::delete_image_handler),
+    #[derive(OpenApi)]
+    #[openapi(
+        nest(
+            (path = "/favorites", api = FavoriteApi),
+            (path = "/folders", api = FolderApi),
+            (path = "/images", api = ImageApi),
+            (path = "/users", api = UserApi),
+            (path = "/tags", api = TagApi)
+        ),
+        tags(
+            (name = "flan", description = "Flan OpenAPI documentation")
         )
-        .route("/upload", post(upload_image::upload_image_handler))
-        .route("/list", get(list_images::list_images_handler));
+    )]
+    struct ApiDoc;
 
-    let images_router = Router::new().route("/:file_id", get(get_image::get_image_handler));
+    #[allow(dead_code)]
+    struct SecurityAddon;
+
+    impl Modify for SecurityAddon {
+        fn modify(&self, openapi: &mut utoipa::openapi::OpenApi) {
+            if let Some(components) = openapi.components.as_mut() {
+                components.add_security_scheme(
+                    "access_key",
+                    SecurityScheme::ApiKey(ApiKey::Header(ApiKeyValue::new("access_key"))),
+                );
+                components.add_security_scheme(
+                    "admin_key",
+                    SecurityScheme::ApiKey(ApiKey::Header(ApiKeyValue::new("admin_key"))),
+                )
+            }
+        }
+    }
+
+    let api_router = Router::new()
+        .nest("/users", user::router())
+        .nest("/folders", folder::router())
+        .nest("/images", image::router())
+        .nest("/tags", tag::router())
+        .nest("/favorites", favorite::router());
+
+    let images_router = Router::new().route("/:file_id", get(image::get::get_image_handler));
+
+    let oapi_router = Router::new()
+        .merge(Scalar::with_url("/scalar", ApiDoc::openapi()))
+        .route("/openapi.json", get(|| async { Json(ApiDoc::openapi()) }));
 
     Router::new()
+        .route("/health", get(health_check::health_handler))
+        .nest("/api-docs", oapi_router)
         .nest("/api", api_router)
         .nest("/images", images_router)
 }

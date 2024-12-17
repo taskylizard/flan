@@ -7,3 +7,4 @@ edition = "2021"
 confique = { version = "0.3.0", features = ["toml"] }
 serde.workspace = true
 chrono.workspace = true
+serde_json = "1.0.133"

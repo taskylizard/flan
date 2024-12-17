@@ -30,6 +30,7 @@ use tracing_subscriber::{
 #[allow(warnings, unused)]
 mod db;
 mod handlers;
+mod image;
 mod layers;
 mod state;
 
