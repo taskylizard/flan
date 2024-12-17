@@ -112,7 +112,7 @@ pub fn transform(file: &[u8], op: &[Operation]) -> Result<Vec<u8>, Error> {
     })
 }
 
-/// Format of an image
+/// Format of the image
 #[derive(Clone, Copy, Debug, Deserialize, ToSchema)]
 #[serde(rename_all = "lowercase")]
 pub enum Format {

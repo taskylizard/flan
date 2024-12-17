@@ -60,6 +60,8 @@ utoipa = { version = "5.2.0", features = [
   "macros",
 ] }
 utoipa-scalar = { version = "0.2.0", features = ["axum"] }
+tower-cookies = "0.10.0"
+tower-sessions = "0.13.0"
 
 [workspace.dependencies]
 tokio = { version = "1.42.0", features = ["full"] }
@@ -79,10 +81,8 @@ opt-level = 1
 [profile.dev.package."*"]
 opt-level = 3
 
-# The profile that 'dist' will build with
-[profile.dist]
-inherits = "release"
-lto = "thin"
+[profile.bacon]
+inherits = "dev"
 
 [profile.opt]
 inherits = "release"

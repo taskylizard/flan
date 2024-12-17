@@ -17,14 +17,15 @@ use tracing::{debug, error};
 use utoipa::IntoParams;
 
 #[derive(Debug, Deserialize, IntoParams)]
+#[into_params(parameter_in = Query)]
 pub struct GetImageParams {
-    /// Width of the image
+    #[param(inline)]
     width: Option<Width>,
-    /// Height of the image
+    #[param(inline)]
     height: Option<Height>,
     /// Quality of the image
     quality: Option<u8>,
-    /// Format of the image
+    #[param(inline)]
     format: Option<Format>,
 }
 

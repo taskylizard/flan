@@ -1,6 +1,7 @@
 use std::convert::Infallible;
 
 pub mod logger;
+pub mod sessions;
 
 pub trait UnwrapInfallible<T> {
     fn unwrap_infallible(self) -> T;
