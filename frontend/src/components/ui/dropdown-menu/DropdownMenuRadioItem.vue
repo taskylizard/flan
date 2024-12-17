@@ -37,7 +37,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits)
     <span class="absolute left-2 flex size-3.5 items-center justify-center">
       <DropdownMenuItemIndicator>
         <!-- eslint-disable-next-line tailwindcss/no-custom-classname -->
-        <DotFilledIcon class="fill-current size-4" />
+        <DotFilledIcon class="size-4 fill-current" />
       </DropdownMenuItemIndicator>
     </span>
     <slot />

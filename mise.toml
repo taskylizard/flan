@@ -3,7 +3,6 @@ act = "latest"
 typos = "latest"
 "ubi:knope-dev/knope" = "latest"
 "ubi:crate-ci/cargo-release" = "latest"
-"ubi:railwayapp/nixpacks" = "latest"
 
 [tasks]
 frontend = { dir = "frontend", run = "nrr dev --host" }
