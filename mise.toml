@@ -31,5 +31,8 @@ dir = "frontend"
 [tasks.format]
 depends = ["format:backend", "format:frontend"]
 
+[tasks."pre-commit"]
+depends = ["format"]
+
 [tasks.build]
 depends = ["build:backend:release", "build:frontend:release"]

@@ -9,3 +9,6 @@ version = "0.25.13"
 
 [tools."ubi:knope-dev/knope"]
 version = "0.16.1"
+
+[tools."ubi:railwayapp/nixpacks"]
+version = "1.30.0"
