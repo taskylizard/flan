@@ -14,12 +14,6 @@ enum Cli {
     },
     /// Clean build artifacts
     Clean,
-    /// Generate shell completions
-    Completions {
-        /// Output directory
-        #[arg(long)]
-        out: Option<String>,
-    },
     /// Generate config template
     Config,
 }
@@ -33,28 +27,14 @@ fn main() -> Result<()> {
             let mut args = vec!["build"];
             if release {
                 args.push("--release");
-                generate_completions(None)?;
             }
             cmd!(sh, "cargo {args...}").run()?
         }
         Cli::Clean => {
             cmd!(sh, "cargo clean").run()?;
         }
-        Cli::Completions { out } => {
-            generate_completions(out.as_deref())?;
-        }
         Cli::Config {} => generate_config_template(),
     }
-
-    Ok(())
-}
-
-fn generate_completions(out: Option<&str>) -> Result<()> {
-    let target_dir = out.unwrap_or("target/completions");
-    std::fs::create_dir_all(target_dir)?;
-    // for &shell in CShell::value_variants() {
-    //     generate_to(shell, &mut FlanCli::command(), "flan-cli", target_dir)?;
-    // }
 
     Ok(())
 }

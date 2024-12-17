@@ -49,11 +49,18 @@
 # Default value: "images"
 #bucket_name = "images"
 
+# Redis config.
 [redis]
+# Redis URL.
+#
 # Can also be specified via environment variable `REDIS_URL`.
+#
 # Default value: "redis://localhost:6379"
 #url = "redis://localhost:6379"
 
+# Redis pool size.
+#
 # Can also be specified via environment variable `REDIS_POOL_SIZE`.
+#
 # Default value: 10
 #pool_size = 10
