@@ -11,7 +11,7 @@ tokio = { version = "1.42.0", features = ["full"] }
 reqwest = { version = "0.12.9", features = ["json", "multipart"] }
 color-eyre = "0.6.3"
 clap = { version = "4.5.23", features = ["derive", "env"] }
-console = "0.15.8"
+console = "0.15.10"
 mime_guess = "2.0.5"
 chrono = { version = "0.4.39", features = ["serde"] }
 comfy-table = "7.1.3"
