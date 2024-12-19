@@ -8,7 +8,7 @@ publish = false
 clap = { version = "4.5.23", features = ["derive"] }
 xshell = "0.2.7"
 eyre = "0.6.12"
-clap_complete = "4.5.38"
+clap_complete = "4.5.40"
 flan-cli = { path = "../cli" }
 common = { path = "../common" }
 confique = { version = "0.3.0", features = ["toml"] }
