@@ -1264,9 +1264,9 @@ dependencies = [
 
 [[package]]
 name = "float-cmp"
-version = "0.9.0"
+version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "98de4bbd547a563b716d8dfa9aad1cb19bfab00f4fa09a6a4ed21dbcf44ce9c4"
+checksum = "b09cf3155332e944990140d967ff5eceb70df778b34f77d8075db46e4704e6d8"
 dependencies = [
  "num-traits",
 ]
@@ -1303,15 +1303,14 @@ dependencies = [
 
 [[package]]
 name = "fred"
-version = "9.4.0"
+version = "10.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3cdd5378252ea124b712e0ac55147d26ae3af575883b34b8423091a4c719606b"
+checksum = "c5987e7f2268f3142d005ea942c0414ed09abf8ec554fa0b04a9209b24405889"
 dependencies = [
  "arc-swap",
  "async-trait",
  "bytes",
  "bytes-utils",
- "crossbeam-queue",
  "float-cmp",
  "fred-macros",
  "futures",
@@ -3648,9 +3647,9 @@ dependencies = [
 
 [[package]]
 name = "redis-protocol"
-version = "5.0.1"
+version = "6.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "65deb7c9501fbb2b6f812a30d59c0253779480853545153a51d8e9e444ddc99f"
+checksum = "9cdba59219406899220fc4cdfd17a95191ba9c9afb719b5fa5a083d63109a9f1"
 dependencies = [
  "bytes",
  "bytes-utils",
