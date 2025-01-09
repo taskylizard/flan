@@ -11,7 +11,7 @@ members = ["cli", "prisma-cli", "common", "xtask"]
 resolver = "2"
 
 [dependencies]
-axum = { version = "0.7.9", features = [
+axum = { version = "0.8.1", features = [
   "json",
   "macros",
   "multipart",
@@ -54,7 +54,7 @@ tower-service = "0.3.3"
 tower-layer = "0.3.3"
 
 [workspace.dependencies]
-tokio = { version = "1.42.0", features = ["full"] }
+tokio = { version = "1.43.0", features = ["full"] }
 serde = { version = "1.0.217", features = ["derive"] }
 chrono = "0.4.39"
 
