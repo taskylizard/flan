@@ -21,7 +21,7 @@ axum = { version = "0.8.1", features = [
 ] }
 tracing = "0.1.41"
 tracing-subscriber = { version = "0.3.19", features = ["env-filter", "time"] }
-uuid = { version = "1.11.0", features = ["v4"] }
+uuid = { version = "1.11.1", features = ["v4"] }
 bytes = "1.9.0"
 dotenvy = "0.15.7"
 s3-tokio = "0.39.4"

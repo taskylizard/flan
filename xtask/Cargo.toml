@@ -5,10 +5,10 @@ edition = "2021"
 publish = false
 
 [dependencies]
-clap = { version = "4.5.24", features = ["derive"] }
+clap = { version = "4.5.26", features = ["derive"] }
 xshell = "0.2.7"
 eyre = "0.6.12"
-clap_complete = "4.5.41"
+clap_complete = "4.5.42"
 flan-cli = { path = "../cli" }
 common = { path = "../common" }
 confique = { version = "0.3.0", features = ["toml"] }
