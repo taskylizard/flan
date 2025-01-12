@@ -28,7 +28,7 @@
     "vue-sonner": "^1.3.0"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^3.12.2",
+    "@antfu/eslint-config": "^3.13.0",
     "@coloradix/tailwindcss": "^2.3.2",
     "@fontsource/geist-sans": "^5.1.0",
     "@iconify-json/lucide": "^1.2.22",
@@ -44,9 +44,9 @@
     "@vue/compiler-sfc": "^3.5.13",
     "@vue/tsconfig": "^0.7.0",
     "autoprefixer": "^10.4.20",
-    "eslint": "^9.17.0",
+    "eslint": "^9.18.0",
     "eslint-plugin-format": "^1.0.1",
-    "lucide-vue-next": "^0.469.0",
+    "lucide-vue-next": "^0.471.0",
     "npm-run-all2": "^7.0.2",
     "postcss": "^8.4.49",
     "sass": "^1.83.1",
