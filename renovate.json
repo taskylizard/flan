@@ -17,44 +17,73 @@
 	"major": {
 		"automerge": false
 	},
-	"addLabels": ["renovate"],
+	"addLabels": [
+		"renovate"
+	],
 	"packageRules": [
 		{
-			"matchManagers": ["cargo"],
-			"matchDepTypes": ["dependencies", "dev-dependencies"],
+			"matchManagers": [
+				"cargo"
+			],
+			"matchDepTypes": [
+				"dependencies",
+				"dev-dependencies"
+			],
 			"groupName": "rust dependencies",
 			"separateMajorMinor": true
 		},
 		{
-			"matchManagers": ["cargo"],
-			"matchDepTypes": ["build-dependencies"],
+			"matchManagers": [
+				"cargo"
+			],
+			"matchDepTypes": [
+				"build-dependencies"
+			],
 			"groupName": "rust build dependencies"
 		},
 		{
 			"groupName": "definitelyTyped",
 			"automerge": true,
-			"matchPackageNames": ["@types/{/,}**"]
+			"matchPackageNames": [
+				"@types/{/,}**"
+			]
 		},
 		{
-			"matchUpdateTypes": ["minor", "patch"],
+			"matchUpdateTypes": [
+				"minor",
+				"patch"
+			],
 			"groupName": "all non-major dependencies",
 			"groupSlug": "all-minor-patch",
-			"matchPackageNames": ["*"]
+			"matchPackageNames": [
+				"*"
+			]
 		},
 		{
 			"automerge": true,
-			"extends": ["packages:linters"]
+			"extends": [
+				"packages:linters"
+			]
 		},
 		{
-			"matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+			"matchUpdateTypes": [
+				"minor",
+				"patch",
+				"pin",
+				"digest"
+			],
 			"automerge": true
 		}
 	],
 	"cargo": {
 		"enabled": true,
 		"commitMessageTopic": "{{depName}}",
-		"fileMatch": ["(^|/)Cargo\\.toml$"],
+		"managerFilePatterns": [
+			"/(^|/)Cargo\\.toml$/"
+		],
 		"versioning": "cargo"
 	},
-	"prBodyNotes": ["{{#if isMajor}}:warning: MAJOR MAJOR MAJOR :warning:{{/if}}"]
+	"prBodyNotes": [
+		"{{#if isMajor}}:warning: MAJOR MAJOR MAJOR :warning:{{/if}}"
+	]
 }
