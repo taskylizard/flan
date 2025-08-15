@@ -78,7 +78,7 @@ services:
     container_name: flan_postgres
     networks:
       - flan
-    image: postgres:15-alpine
+    image: postgres:17-alpine@sha256:ee77ed1d58c69c0ccd03adfb815d53481f495c36b2b1016eeba0d44f1835fff5
     ports:
       - "6500:5432"
     environment:
