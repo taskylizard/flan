@@ -62,7 +62,7 @@ services:
   minio:
     networks:
       - flan
-    image: quay.io/minio/minio
+    image: quay.io/minio/minio@sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e
     container_name: flan_minio
     command: server /data --console-address ":9001"
     environment:
@@ -78,7 +78,7 @@ services:
     container_name: flan_postgres
     networks:
       - flan
-    image: postgres:15-alpine
+    image: postgres:15-alpine@sha256:fe0737ba566a2c5b2a28f34433c0a423261900ec17b9bf7ad115e1aae7e57f1b
     ports:
       - "6500:5432"
     environment:
