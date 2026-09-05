@@ -100,7 +100,7 @@ services:
       start_period: 80s
 
   valkey:
-    image: valkey/valkey:8.0.2@sha256:e6a5b8e3e537cff12844c9be87d5f5e3c27e55c86833e92447e0bf33ce735ead
+    image: valkey/valkey:8.1.10@sha256:98c6217ccc2fe5e6c4b5dcd5c40eef4de2a68924e7ecef50d5a0a30b57dfaef6
     networks:
       - flan
     container_name: flan_valkey
