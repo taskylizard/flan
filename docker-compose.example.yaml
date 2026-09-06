@@ -6,7 +6,7 @@ networks:
 
 services:
   traefik:
-    image: traefik:v2.11@sha256:e85992a40c14843843322bf5956c9afb88c1cf03fa8d02ac493202c4098f388f
+    image: traefik:v2.11@sha256:59b207b94324288b2ed6ec57985496848e1f838b0904fa020c82eec45ace5c53
     container_name: flan_traefik
     command:
       - "--api.insecure=false" # Disable the API/Dashboard for security
