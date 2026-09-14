@@ -1,4 +1,4 @@
-FROM rustlang/rust:nightly-slim AS builder
+FROM rustlang/rust:nightly-slim@sha256:43ffaec7eae37d372943a5ec76df76eedcc62b65fbeb24a6c14132541112bc26 AS builder
 WORKDIR /app
 
 RUN apt-get update && \
