@@ -37,7 +37,7 @@
     "@prettier/plugin-xml": "^3.4.1",
     "@radix-ui/colors": "^3.0.0",
     "@tailwindcss/typography": "^0.5.16",
-    "@tsconfig/node20": "^20.1.4",
+    "@tsconfig/node22": "^22.0.0",
     "@types/bun": "^1.1.16",
     "@types/node": "^22.10.6",
     "@vitejs/plugin-vue": "^5.2.1",
