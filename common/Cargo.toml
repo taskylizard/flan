@@ -4,6 +4,6 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-confique = { version = "0.3.0", features = ["toml"] }
+confique = { version = "0.4.0", features = ["toml"] }
 serde.workspace = true
 chrono.workspace = true
